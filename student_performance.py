@@ -4,6 +4,24 @@ import numpy as np
 import pickle
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import os
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+
+
+
+
+
+uri = "mongodb+srv://jatintomer27:anwarpur@cluster0.rrrq0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+# Create a new client and connect to the server
+client = MongoClient(uri, server_api=ServerApi('1'))
+
+# Create a database
+db = client["Student"]
+
+# Create the collection
+collection = db["student_performance"]
+
 
 
 def load_model():
@@ -11,7 +29,7 @@ def load_model():
     Load the model from the pickel file
     """
     current_directory = os.getcwd()
-    target_path = os.path.abspath(os.path.join(current_directory, "student_lr_final_model.pkl"))
+    target_path = os.path.abspath(os.path.join(current_directory, "../../Models/student_lr_final_model.pkl"))
     with open(target_path,'rb') as file:
         model, encorder, scaler = pickle.load(file)
     return model, encorder, scaler
@@ -51,6 +69,8 @@ def main():
             "Sample Question Papers Practiced":solved_papers,
         }
         predection = predict_data(user_data)
+        user_data.update({"predection":predection})
+        collection.insert_one(user_data)
         st.success(f"Your Performance wil be {predection[0]}")
         
 
