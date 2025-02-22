@@ -29,7 +29,7 @@ def load_model():
     Load the model from the pickel file
     """
     current_directory = os.getcwd()
-    target_path = os.path.abspath(os.path.join(current_directory, "../../Models/student_lr_final_model.pkl"))
+    target_path = os.path.abspath(os.path.join(current_directory, "student_lr_final_model.pkl"))
     with open(target_path,'rb') as file:
         model, encorder, scaler = pickle.load(file)
     return model, encorder, scaler
@@ -69,11 +69,12 @@ def main():
             "Sample Question Papers Practiced":solved_papers,
         }
         predection = predict_data(user_data)
-        user_data.update({"predection":predection})
+        user_data.update({"predection":int(predection[0])})
+        # Here extra_activity is comming as numpy array
+        user_data.update({"Extracurricular Activities":extra_activity[0] if type(extra_activity) ==np.int64 else extra_activity})
         collection.insert_one(user_data)
         st.success(f"Your Performance wil be {predection[0]}")
         
-
 
 # To run this python file as streamlit app:
     
